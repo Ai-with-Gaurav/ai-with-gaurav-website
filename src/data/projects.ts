@@ -11,6 +11,12 @@ export const projects: Project[] = [
     category: "ai",
     liveUrl: "#",
     githubUrl: "#",
+    highlights: [
+      "94% automated resolution rate",
+      "10k+ queries handled monthly",
+      "3-second average response time",
+    ],
+    result: "Reduced support costs by 60%",
   },
   {
     slug: "voice-sales-assistant",
@@ -21,6 +27,12 @@ export const projects: Project[] = [
     tags: ["Vapi", "OpenAI", "Twilio", "n8n"],
     category: "ai",
     liveUrl: "#",
+    highlights: [
+      "Human-like conversation quality",
+      "Auto-books calendar appointments",
+      "Handles objections in real-time",
+    ],
+    result: "2x lead conversion rate",
   },
   {
     slug: "rag-knowledge-base",
@@ -32,6 +44,12 @@ export const projects: Project[] = [
     category: "ai",
     liveUrl: "#",
     githubUrl: "#",
+    highlights: [
+      "50k+ documents indexed",
+      "Source citations in every answer",
+      "99.5% uptime SLA",
+    ],
+    result: "5x faster information retrieval",
   },
   {
     slug: "workflow-automation-suite",
@@ -42,6 +60,12 @@ export const projects: Project[] = [
     tags: ["n8n", "Webhooks", "APIs", "Slack"],
     category: "automation",
     liveUrl: "#",
+    highlights: [
+      "15+ tools connected seamlessly",
+      "Zero-downtime error handling",
+      "Real-time Slack notifications",
+    ],
+    result: "80% reduction in manual work",
   },
   {
     slug: "social-media-dashboard",
@@ -53,6 +77,12 @@ export const projects: Project[] = [
     category: "web",
     liveUrl: "#",
     githubUrl: "#",
+    highlights: [
+      "AI content generation in brand voice",
+      "Multi-platform auto-posting",
+      "Engagement analytics dashboard",
+    ],
+    result: "3x social engagement growth",
   },
   {
     slug: "ecommerce-ai",
@@ -64,5 +94,11 @@ export const projects: Project[] = [
     category: "ai",
     liveUrl: "#",
     githubUrl: "#",
+    highlights: [
+      "Personalized recommendations per user",
+      "AI-generated product descriptions",
+      "Real-time inventory awareness",
+    ],
+    result: "35% increase in avg order value",
   },
 ];

@@ -8,6 +8,8 @@ export interface Project {
   liveUrl?: string;
   githubUrl?: string;
   caseStudyUrl?: string;
+  highlights?: string[];
+  result?: string;
 }
 
 export interface Service {
@@ -15,6 +17,10 @@ export interface Service {
   description: string;
   icon: string;
   tags: string[];
+  features?: string[];
+  price?: string;
+  timeline?: string;
+  popular?: boolean;
 }
 
 export interface Testimonial {
