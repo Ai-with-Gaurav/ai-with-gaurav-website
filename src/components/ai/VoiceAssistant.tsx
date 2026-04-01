@@ -46,7 +46,8 @@ export default function VoiceAssistant() {
 
       vapi.on("error", (err: unknown) => {
         console.error("Vapi error:", err);
-        setError("Voice call failed. Try again or use desktop.");
+        const msg = err instanceof Error ? err.message : typeof err === "object" && err !== null ? JSON.stringify(err) : String(err);
+        setError("Vapi: " + (msg.length > 150 ? msg.slice(0, 150) + "..." : msg));
         setStatus("idle");
         setIsActive(false);
       });
