@@ -1,0 +1,104 @@
+---
+title: "Building Voice AI Agents with Vapi"
+description: "A complete guide to creating voice AI assistants that handle real conversations with human-like fluency."
+date: "2026-03-15"
+tags: ["voice-ai", "vapi", "openai"]
+author: "Gaurav"
+published: true
+---
+
+## Introduction
+
+Voice AI is transforming how businesses interact with customers. In this guide, I'll walk you through building a production-ready voice AI agent using Vapi and OpenAI's Realtime API.
+
+## Why Voice AI?
+
+Traditional IVR systems frustrate users with rigid menus and limited understanding. Modern voice AI agents can:
+
+- Understand natural language and context
+- Handle complex, multi-turn conversations
+- Integrate with your existing tools and databases
+- Scale to handle thousands of concurrent calls
+
+## Getting Started with Vapi
+
+Vapi provides the infrastructure layer for voice AI, handling speech-to-text, text-to-speech, and real-time audio streaming.
+
+### Step 1: Set Up Your Vapi Account
+
+First, create a Vapi account and get your API keys. You'll need both a public key (for client-side) and a private key (for server-side operations).
+
+```bash
+npm install @vapi-ai/web
+```
+
+### Step 2: Configure Your Assistant
+
+The assistant configuration defines your AI agent's personality, knowledge, and capabilities:
+
+```typescript
+const assistantConfig = {
+  name: "Sales Assistant",
+  model: {
+    provider: "openai",
+    model: "gpt-4",
+    systemPrompt: `You are a helpful sales assistant for our company.
+    Be friendly, concise, and helpful.
+    Always try to understand the customer's needs before suggesting solutions.`
+  },
+  voice: {
+    provider: "11labs",
+    voiceId: "your-voice-id"
+  }
+};
+```
+
+### Step 3: Handle Conversations
+
+```typescript
+const vapi = new Vapi('your-public-key');
+
+vapi.on('speech-start', () => {
+  console.log('User started speaking');
+});
+
+vapi.on('message', (message) => {
+  console.log('AI response:', message);
+});
+
+vapi.start(assistantConfig);
+```
+
+## Adding Custom Functions
+
+The real power comes from connecting your voice agent to business logic:
+
+```typescript
+const functions = [
+  {
+    name: "bookAppointment",
+    description: "Book an appointment for the caller",
+    parameters: {
+      type: "object",
+      properties: {
+        date: { type: "string" },
+        time: { type: "string" },
+        service: { type: "string" }
+      }
+    }
+  }
+];
+```
+
+## Best Practices
+
+1. **Keep responses concise** — Voice conversations need shorter responses than text chats
+2. **Handle interruptions** — Users should be able to interrupt the AI mid-sentence
+3. **Add fallbacks** — Always have a path to a human agent for complex issues
+4. **Monitor and iterate** — Review conversation transcripts regularly to improve prompts
+
+## Conclusion
+
+Voice AI is no longer a futuristic concept — it's a practical tool that businesses can deploy today. With platforms like Vapi, the barrier to entry has never been lower.
+
+> Building a voice AI agent? I'd love to help. [Get in touch](/contact) to discuss your project.

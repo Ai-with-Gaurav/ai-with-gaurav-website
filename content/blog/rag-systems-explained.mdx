@@ -1,0 +1,116 @@
+---
+title: "RAG Systems Explained: Building AI That Knows Your Data"
+description: "Learn how Retrieval-Augmented Generation works and how to build a production RAG system with LangChain and pgvector."
+date: "2026-03-01"
+tags: ["rag", "langchain", "ai"]
+author: "Gaurav"
+published: true
+---
+
+## What is RAG?
+
+Retrieval-Augmented Generation (RAG) is a technique that combines the power of large language models with your own data. Instead of relying solely on what the LLM was trained on, RAG retrieves relevant documents from your knowledge base and uses them as context for generating accurate, grounded responses.
+
+## Why RAG Matters
+
+LLMs are incredibly capable, but they have limitations:
+
+- They can hallucinate facts
+- Their training data has a cutoff date
+- They don't know about your specific business data
+
+RAG solves all three problems by grounding the LLM's responses in your actual documents.
+
+## Architecture Overview
+
+A typical RAG system has three main components:
+
+1. **Document Ingestion** — Processing and storing your documents
+2. **Retrieval** — Finding relevant documents for a given query
+3. **Generation** — Using retrieved context to generate answers
+
+## Building the Ingestion Pipeline
+
+### Chunking Your Documents
+
+Large documents need to be split into smaller, meaningful chunks:
+
+```typescript
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+
+const splitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 500,
+  chunkOverlap: 50,
+  separators: ['\n\n', '\n', '. ', ' ']
+});
+
+const chunks = await splitter.splitDocuments(documents);
+```
+
+### Generating Embeddings
+
+Each chunk gets converted into a vector embedding:
+
+```typescript
+import { OpenAIEmbeddings } from '@langchain/openai';
+
+const embeddings = new OpenAIEmbeddings({
+  model: 'text-embedding-3-small'
+});
+
+const vectors = await embeddings.embedDocuments(
+  chunks.map(chunk => chunk.pageContent)
+);
+```
+
+### Storing in pgvector
+
+```sql
+CREATE TABLE documents (
+  id BIGSERIAL PRIMARY KEY,
+  content TEXT,
+  metadata JSONB,
+  embedding VECTOR(1536)
+);
+```
+
+## The Retrieval Step
+
+When a user asks a question:
+
+1. Convert the question to an embedding
+2. Find the most similar document chunks using cosine similarity
+3. Return the top-k results
+
+```typescript
+const results = await supabase.rpc('match_documents', {
+  query_embedding: questionEmbedding,
+  match_count: 5,
+  match_threshold: 0.7
+});
+```
+
+## Generating Grounded Answers
+
+Finally, inject the retrieved context into the LLM prompt:
+
+```typescript
+const prompt = `Based on the following context, answer the user's question.
+If you cannot find the answer in the context, say so honestly.
+
+Context:
+${retrievedDocs.map(d => d.content).join('\n\n')}
+
+Question: ${userQuestion}`;
+```
+
+## Performance Tips
+
+- **Chunk size matters** — Too small and you lose context, too large and you add noise
+- **Hybrid search** — Combine vector similarity with keyword search for better results
+- **Reranking** — Use a cross-encoder to rerank results after initial retrieval
+- **Caching** — Cache frequent queries to reduce latency and cost
+
+## Conclusion
+
+RAG is the bridge between generic AI and AI that truly understands your business. With the right architecture, you can build systems that give accurate, sourced answers from your own data.
