@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Mic, MicOff, Phone, PhoneOff } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function VoiceAssistant() {
   const [isActive, setIsActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [error, setError] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const [status, setStatus] = useState<"idle" | "connecting" | "connected">(
     "idle"
   );
@@ -15,8 +17,21 @@ export default function VoiceAssistant() {
 
   const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
 
+  useEffect(() => {
+    setIsMobile(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  }, []);
+
   const startCall = useCallback(async () => {
     if (!publicKey) return;
+    setError("");
+
+    // Check microphone permission first
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      setError("Microphone access denied. Please allow mic permission.");
+      return;
+    }
 
     try {
       setStatus("connecting");
@@ -28,6 +43,7 @@ export default function VoiceAssistant() {
       vapi.on("call-start", () => {
         setStatus("connected");
         setIsActive(true);
+        setError("");
       });
 
       vapi.on("call-end", () => {
@@ -36,8 +52,9 @@ export default function VoiceAssistant() {
         vapiRef.current = null;
       });
 
-      vapi.on("error", (error: unknown) => {
-        console.error("Vapi error:", error);
+      vapi.on("error", (err: unknown) => {
+        console.error("Vapi error:", err);
+        setError("Voice call failed. Try again or use desktop.");
         setStatus("idle");
         setIsActive(false);
       });
@@ -59,8 +76,9 @@ export default function VoiceAssistant() {
           voiceId: "Elliot",
         },
       });
-    } catch (error) {
-      console.error("Voice call error:", error);
+    } catch (err) {
+      console.error("Voice call error:", err);
+      setError("Could not start voice call. Please try on desktop.");
       setStatus("idle");
       setIsActive(false);
     }
@@ -93,78 +111,95 @@ export default function VoiceAssistant() {
   if (!publicKey) return null;
 
   return (
-    <div className="flex items-center gap-3">
-      {/* Sound wave animation when active */}
-      {isActive && (
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              className="w-1 rounded-full bg-primary"
-              style={{
-                height: "16px",
-                animation: `pulse 1s ease-in-out ${i * 0.15}s infinite`,
-              }}
-            />
-          ))}
-          <style>{`
-            @keyframes pulse {
-              0%, 100% { transform: scaleY(0.4); }
-              50% { transform: scaleY(1); }
-            }
-          `}</style>
-        </div>
-      )}
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex items-center gap-3">
+        {/* Sound wave animation when active */}
+        {isActive && (
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="w-1 rounded-full bg-primary"
+                style={{
+                  height: "16px",
+                  animation: `pulse 1s ease-in-out ${i * 0.15}s infinite`,
+                }}
+              />
+            ))}
+            <style>{`
+              @keyframes pulse {
+                0%, 100% { transform: scaleY(0.4); }
+                50% { transform: scaleY(1); }
+              }
+            `}</style>
+          </div>
+        )}
 
-      {/* Status text */}
-      {status === "connecting" && (
-        <span className="text-xs text-text-muted animate-pulse">
-          Connecting...
-        </span>
-      )}
-      {status === "connected" && (
-        <span className="text-xs text-green-400">Listening...</span>
-      )}
+        {/* Status text */}
+        {status === "connecting" && (
+          <span className="text-xs text-text-muted animate-pulse">
+            Connecting...
+          </span>
+        )}
+        {status === "connected" && (
+          <span className="text-xs text-green-400">Listening...</span>
+        )}
 
-      {/* Mute toggle */}
-      {isActive && (
+        {/* Mute toggle */}
+        {isActive && (
+          <button
+            onClick={toggleMute}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full transition-colors cursor-pointer",
+              isMuted
+                ? "bg-red-500/10 text-red-400"
+                : "bg-dark-700 text-text-muted hover:bg-dark-600"
+            )}
+            aria-label={isMuted ? "Unmute" : "Mute"}
+          >
+            {isMuted ? (
+              <MicOff className="h-4 w-4" />
+            ) : (
+              <Mic className="h-4 w-4" />
+            )}
+          </button>
+        )}
+
+        {/* Call toggle */}
         <button
-          onClick={toggleMute}
+          onClick={isActive ? endCall : startCall}
+          disabled={status === "connecting"}
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full transition-colors cursor-pointer",
-            isMuted
-              ? "bg-red-500/10 text-red-400"
-              : "bg-dark-700 text-text-muted hover:bg-dark-600"
+            "flex h-12 w-12 items-center justify-center rounded-full transition-all cursor-pointer shadow-lg",
+            isActive
+              ? "bg-red-500 text-white hover:bg-red-600 shadow-red-500/20"
+              : "bg-green-500 text-white hover:bg-green-600 shadow-green-500/20",
+            status === "connecting" && "opacity-50 cursor-not-allowed"
           )}
-          aria-label={isMuted ? "Unmute" : "Mute"}
+          aria-label={isActive ? "End call" : "Start voice call"}
         >
-          {isMuted ? (
-            <MicOff className="h-4 w-4" />
+          {isActive ? (
+            <PhoneOff className="h-5 w-5" />
           ) : (
-            <Mic className="h-4 w-4" />
+            <Phone className="h-5 w-5" />
           )}
         </button>
+      </div>
+
+      {/* Error message */}
+      {error && (
+        <span className="text-xs text-red-400 text-center max-w-[250px]">
+          {error}
+        </span>
       )}
 
-      {/* Call toggle */}
-      <button
-        onClick={isActive ? endCall : startCall}
-        disabled={status === "connecting"}
-        className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-full transition-all cursor-pointer shadow-lg",
-          isActive
-            ? "bg-red-500 text-white hover:bg-red-600 shadow-red-500/20"
-            : "bg-green-500 text-white hover:bg-green-600 shadow-green-500/20",
-          status === "connecting" && "opacity-50 cursor-not-allowed"
-        )}
-        aria-label={isActive ? "End call" : "Start voice call"}
-      >
-        {isActive ? (
-          <PhoneOff className="h-5 w-5" />
-        ) : (
-          <Phone className="h-5 w-5" />
-        )}
-      </button>
+      {/* Mobile hint */}
+      {isMobile && status === "idle" && !error && (
+        <span className="flex items-center gap-1 text-xs text-text-muted">
+          <Monitor className="h-3 w-3" />
+          Best experience on desktop
+        </span>
+      )}
     </div>
   );
 }
