@@ -18,7 +18,8 @@ export default function VoiceAssistant() {
   const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
 
   useEffect(() => {
-    setIsMobile(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+    const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    setIsMobile(mobile);
   }, []);
 
   const startCall = useCallback(async () => {
@@ -91,6 +92,17 @@ export default function VoiceAssistant() {
   }, []);
 
   if (!publicKey) return null;
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center gap-2 rounded-full bg-dark-700 px-4 py-2 text-sm text-text-muted">
+          <Phone className="h-4 w-4 text-primary" />
+          <span>Voice AI available on desktop</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-2">
