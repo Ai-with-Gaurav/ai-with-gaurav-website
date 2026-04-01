@@ -52,23 +52,7 @@ export default function VoiceAssistant() {
         setIsActive(false);
       });
 
-      await vapi.start({
-        model: {
-          provider: "groq",
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are Gaurav's AI voice assistant on the 'AI with Gaurav' website. Be friendly, concise, and helpful. Help visitors learn about AI services offered including chatbots, voice assistants, RAG systems, and automation. Keep responses short since this is a voice conversation.",
-            },
-          ],
-        },
-        voice: {
-          provider: "vapi",
-          voiceId: "Elliot",
-        },
-      });
+      await vapi.start("2c33fe7a-0d77-454c-ba86-9309ba05261d");
     } catch (err: unknown) {
       console.error("Voice call error:", err);
       const msg = err instanceof Error ? err.message : String(err);
