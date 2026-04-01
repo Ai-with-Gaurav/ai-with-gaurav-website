@@ -36,6 +36,12 @@ export default function VoiceAssistant() {
         vapiRef.current = null;
       });
 
+      vapi.on("error", (error: unknown) => {
+        console.error("Vapi error:", error);
+        setStatus("idle");
+        setIsActive(false);
+      });
+
       await vapi.start({
         model: {
           provider: "groq",
@@ -49,8 +55,8 @@ export default function VoiceAssistant() {
           ],
         },
         voice: {
-          provider: "11labs",
-          voiceId: "21m00Tcm4TlvDq8ikWAM",
+          provider: "vapi",
+          voiceId: "Elliot",
         },
       });
     } catch (error) {
