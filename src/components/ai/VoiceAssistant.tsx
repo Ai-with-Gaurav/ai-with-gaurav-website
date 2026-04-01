@@ -38,8 +38,8 @@ export default function VoiceAssistant() {
 
       await vapi.start({
         model: {
-          provider: "openai",
-          model: "gpt-4o-mini",
+          provider: "groq",
+          model: "llama-3.3-70b-versatile",
           messages: [
             {
               role: "system",
