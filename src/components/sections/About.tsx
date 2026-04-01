@@ -28,7 +28,7 @@ const skills = [
 ];
 
 const highlights = [
-  { icon: Briefcase, label: "3+ Years Experience" },
+  { icon: Briefcase, label: "AI Solutions Architect" },
   { icon: MapPin, label: "Available Worldwide" },
   { icon: GraduationCap, label: "Continuous Learner" },
 ];
