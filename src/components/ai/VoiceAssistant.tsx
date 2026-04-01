@@ -25,14 +25,6 @@ export default function VoiceAssistant() {
     if (!publicKey) return;
     setError("");
 
-    // Check microphone permission first
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
-      setError("Microphone access denied. Please allow mic permission.");
-      return;
-    }
-
     try {
       setStatus("connecting");
       const VapiModule = await import("@vapi-ai/web");
@@ -76,9 +68,14 @@ export default function VoiceAssistant() {
           voiceId: "Elliot",
         },
       });
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Voice call error:", err);
-      setError("Could not start voice call. Please try on desktop.");
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes("permission") || msg.toLowerCase().includes("notallowed")) {
+        setError("Microphone access denied. Please allow mic permission.");
+      } else {
+        setError(msg.length > 100 ? msg.slice(0, 100) + "..." : msg);
+      }
       setStatus("idle");
       setIsActive(false);
     }
