@@ -10,7 +10,8 @@ export default function VoiceAssistant() {
   const [status, setStatus] = useState<"idle" | "connecting" | "connected">(
     "idle"
   );
-  const vapiRef = useRef<ReturnType<typeof import("@vapi-ai/web").default> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const vapiRef = useRef<any>(null);
 
   const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
 
