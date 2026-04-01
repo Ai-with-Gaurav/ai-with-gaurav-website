@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Download, MapPin, Briefcase, GraduationCap } from "lucide-react";
 import Container from "@/components/ui/Container";
@@ -51,8 +52,15 @@ export default function About() {
             className="flex justify-center"
           >
             <div className="relative">
-              <div className="h-72 w-72 rounded-2xl bg-gradient-to-br from-primary/20 to-dark-700 flex items-center justify-center sm:h-80 sm:w-80">
-                <span className="text-8xl font-bold text-primary/30">G</span>
+              <div className="h-72 w-72 overflow-hidden rounded-2xl sm:h-80 sm:w-80">
+                <Image
+                  src="/images/gaurav.jpeg"
+                  alt="Gaurav"
+                  width={320}
+                  height={320}
+                  className="h-full w-full object-cover"
+                  priority
+                />
               </div>
               <div className="absolute -bottom-3 -right-3 h-72 w-72 rounded-2xl border-2 border-primary/20 -z-10 sm:h-80 sm:w-80" />
             </div>
