@@ -186,11 +186,17 @@ export default function VoiceAssistant() {
         </button>
       </div>
 
-      {/* Error message */}
+      {/* Error message with help */}
       {error && (
-        <span className="text-xs text-red-400 text-center max-w-[250px]">
-          {error}
-        </span>
+        <div className="flex flex-col items-center gap-1.5 max-w-[280px]">
+          <span className="text-xs text-red-400 text-center">{error}</span>
+          {error.includes("Microphone") && (
+            <div className="text-xs text-text-muted text-center bg-dark-800 border border-dark-600 rounded-lg px-3 py-2">
+              <p className="font-medium text-text-primary mb-1">How to fix:</p>
+              <p>Tap the <span className="text-primary">lock/tune icon</span> next to the URL bar → Site settings → Microphone → Allow → Reload page</p>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Mobile hint */}
