@@ -23,7 +23,6 @@ export default function Home() {
       <About />
       <Process />
       <SectionDivider />
-      <Testimonials />
       <FAQ />
       <SectionDivider />
       <Contact />
