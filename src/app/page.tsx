@@ -4,7 +4,6 @@ import Portfolio from "@/components/sections/Portfolio";
 import CaseStudies from "@/components/sections/CaseStudies";
 import About from "@/components/sections/About";
 import Process from "@/components/sections/Process";
-import Testimonials from "@/components/sections/Testimonials";
 import FAQ from "@/components/sections/FAQ";
 import Contact from "@/components/sections/Contact";
 import FeedbackWidget from "@/components/sections/FeedbackWidget";
